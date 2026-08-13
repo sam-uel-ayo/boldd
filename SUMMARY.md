@@ -79,6 +79,7 @@
   * [Card Activation](api-reference/physical-cards/card-activation.md)
   * [Cards Details](api-reference/physical-cards/cards-details.md)
   * [Freeze and Unfreeze Card](api-reference/physical-cards/freeze-and-unfreeze-card.md)
+  * [Card Statement](api-reference/virtual-cards/card-statement.md)
 * [Global Accounts (FX Wallets)](api-reference/global-accounts-fx-wallets/README.md)
   * [Create USD Account](api-reference/global-accounts-fx-wallets/create-usd-account.md)
   * [Create EUR Account](api-reference/global-accounts-fx-wallets/create-eur-account.md)

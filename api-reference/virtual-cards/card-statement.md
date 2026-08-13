@@ -1,10 +1,10 @@
 # Card Statement
 
-Get the full transaction statement for a card.
+Get the full transaction statement for both **Virtual Cards** and **Physical Cards**.
 
 **Endpoint**
 
-<mark style="color:green;">`POST`</mark> `{{base_url}}/business/card-statement`
+<mark style="color:green;">`POST`</mark> `{{base_url}}/business/card-statement` (or `card-statement.php`)
 
 **Request Headers**
 
@@ -15,9 +15,12 @@ Get the full transaction statement for a card.
 
 #### Request Body
 
-| Field    | Type   | Required | Description   |
-| -------- | ------ | -------- | ------------- |
-| `cardid` | string | Yes      | The card's ID |
+| Field | Type | Required | Description |
+| --- | --- | --- | --- |
+| `cardid` / `vcardid` | `string` | Yes | The card ID or virtual card ID to fetch statements for. |
+| `from_date` | `string` | No | Start date for statement filter (`YYYY-MM-DD`). |
+| `to_date` | `string` | No | End date for statement filter (`YYYY-MM-DD`). |
+| `months` / `duration_months` | `number` | No | Number of months of statements to query (up to **3 months**; defaults to **1 month**). |
 
 {% tabs %}
 {% tab title="cURL" %}
@@ -27,7 +30,8 @@ curl --location '{{base_url}}/business/card-statement' \
 --header 'Content-Type: application/json' \
 --header 'Authorization: Bearer YOUR_SECRET_KEY' \
 --data '{
-    "cardid": "ao022-22e23o-2238-2829d"
+    "cardid": "ao022-22e23o-2238-2829d",
+    "months": 1
 }'
 ```
 {% endcode %}
@@ -42,7 +46,10 @@ const response = await fetch('{{base_url}}/business/card-statement', {
     'Authorization': 'Bearer YOUR_SECRET_KEY',
     'Content-Type': 'application/json'
   },
-  body: JSON.stringify({ cardid: 'ao022-22e23o-2238-2829d' })
+  body: JSON.stringify({ 
+    cardid: 'ao022-22e23o-2238-2829d',
+    months: 1 
+  })
 });
 const data = await response.json();
 ```
@@ -54,13 +61,14 @@ const data = await response.json();
 ```javascript
 const axios = require('axios');
 let data = JSON.stringify({
-  "cardid": "ao022-22e23o-2238-2829d"
+  "cardid": "ao022-22e23o-2238-2829d",
+  "months": 1
 });
 
 let config = {
   method: 'post',
   maxBodyLength: Infinity,
-  url: '{{base_url}}/business/card-statement'
+  url: '{{base_url}}/business/card-statement',
   headers: { 
     'Content-Type': 'application/json', 
     'Authorization': 'Bearer YOUR_SECRET_KEY'
@@ -75,7 +83,6 @@ axios.request(config)
 .catch((error) => {
   console.log(error);
 });
-
 ```
 {% endcode %}
 {% endtab %}
@@ -88,7 +95,10 @@ import json
 
 url = "{{base_url}}/business/card-statement"
 
-payload = json.dumps({'cardid': 'ao022-22e23o-2238-2829d'})
+payload = json.dumps({
+  'cardid': 'ao022-22e23o-2238-2829d',
+  'months': 1
+})
 headers = {
   'Content-Type': 'application/json',
   'Authorization': 'Bearer YOUR_SECRET_KEY'
@@ -116,7 +126,8 @@ curl_setopt_array($curl, array(
   CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
   CURLOPT_CUSTOMREQUEST => 'POST',
   CURLOPT_POSTFIELDS =>'{
-    "cardid": "ao022-22e23o-2238-2829d"
+    "cardid": "ao022-22e23o-2238-2829d",
+    "months": 1
 }',
   CURLOPT_HTTPHEADER => array(
     'Content-Type: application/json',
@@ -141,7 +152,8 @@ var headers = {
 };
 var request = http.Request('POST', Uri.parse('{{base_url}}/business/card-statement'));
 request.body = json.encode({
-  "cardid": "ao022-22e23o-2238-2829d"
+  "cardid": "ao022-22e23o-2238-2829d",
+  "months": 1
 });
 request.headers.addAll(headers);
 
@@ -153,7 +165,6 @@ if (response.statusCode == 200) {
 else {
   print(response.reasonPhrase);
 }
-
 ```
 {% endcode %}
 {% endtab %}
@@ -184,5 +195,5 @@ else {
 {% endcode %}
 
 {% hint style="info" %}
-**Review:** in the original combined sidebar draft, **Card Statement** and **Update Card PIN** were listed under Virtual Cards. In the actual source content, both endpoints only ever appear under the Physical Card section, and neither uses a `vcardid`-style field — they use the generic `cardid` field also used by other physical-card endpoints. Placed here under Physical Cards to match the documented content; worth confirming with the API team whether they also work for virtual cards before deciding whether to cross-list them.
+**Note:** `POST {{base_url}}/business/card-statement` supports both **Virtual Cards** and **Physical Cards**. It accepts either `cardid` or `vcardid`, defaults to the last 1 month, and supports date range filtering (`from_date`, `to_date`, `months`, `duration_months`) up to a maximum of **3 months**.
 {% endhint %}
