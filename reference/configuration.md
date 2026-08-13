@@ -4,76 +4,123 @@ icon: sliders
 
 # Configuration
 
-System configuration parameters, API environment URLs, security keys, rate limits, and webhook event specifications for the **Boldd Financial API Platform**.
+System parameters, environment settings, service grants, quotas, pricing overrides, and webhook event specifications for the **Boldd API Platform**.
 
 ***
 
-## Environment Base URLs
+## Base URL
 
-Boldd provides dual environment access to ensure seamless testing prior to production launch:
-
+Prefix every endpoint in the reference with:
 ```
-# Staging / Sandbox Base URL
-https://api.oneappgo.com/v1
-
-# Production Base URL
-https://api.oneappgo.com/v1
+{{base_url}} = https://api.oneappgo.com/v1
 ```
-
-> [!NOTE]
-> Environment selection is controlled by the secret key passed in the `Authorization` header. Sandbox secret keys (`sec_test_...`) route requests to sandbox ledgers, while live secret keys (`sec_live_...`) execute live banking operations.
 
 ***
 
-## Secret Key Format & Management
+## Authentication & Key Types
 
-| Key Type | Prefix | Recommended Usage |
-| --- | --- | --- |
-| **Sandbox Secret Key** | `sec_test_` | Integration testing, automated unit tests, staging environments. |
-| **Live Secret Key** | `sec_live_` | Production server deployments, live billing, live card operations. |
+Boldd authenticates requests via the `Authorization` header:
 
 ```http
-Authorization: Bearer sec_live_9a8b7c6d5e4f3a2b1c0d9e8f
+Authorization: Bearer YOUR_SECRET_KEY
 ```
+or
+```http
+Authorization: Bearer YOUR_PUBLIC_KEY
+```
+
+* **Secret Key:** Authorized to execute state-changing actions (initializing transactions, sending money, issuing cards). Keep strictly confidential on your backend.
+* **Public Key:** Used for read-only scenarios (e.g. fetching bank lists, data plans, electricity billers).
+* **Test vs. Live Mode:** Determined by the key used (`1applive_sk_...` vs test keys). Data between test and live mode is fully isolated.
+
+***
+
+## Service Grants
+
+Certain endpoints check for an explicit grant on your account in addition to key validation:
+
+| Grant Name | Feature / Endpoint Coverage |
+| --- | --- |
+| `virtualcard` | Virtual card creation and management |
+| `sendmoney` | Bank transfer payouts |
+| `globalaccount` | Global FX account creation |
+| `virtualaccount` | Dedicated NUBAN virtual account generation |
+| `usdaccount` | USD account issuance |
+| `ngnusd` | NGN to USD conversion |
+| `bvn_kyc` | BVN identity verification checks |
+| `nin_kyc` | NIN identity verification checks |
+| `liveness` | Biometric liveness check sessions |
+
+To request access to any of these service grants, email **hi@useboldd.com**. If a grant is missing, the API returns a safe failure payload with `"status": false`.
+
+***
+
+## Usage Quotas & Metered Endpoints
+
+The following endpoints are covered by quota policies and may return advisory usage fields in `data`:
+
+* **Metered Products:** `sendmoney`, `sendmoney-status`, `virtualcard`, `globalaccount`, `bvn_kyc`, `nin_kyc`, `verifybankacct`, `verifyelect`, `liveness`, `verifytrans`, `cardrequest-status`.
+
+| Advisory Field | Description |
+| --- | --- |
+| `free_limit` | Free usage allowance for the current window. |
+| `current_count` | Usage count so far in the current window. |
+| `overage_fee` | Fee charged once `free_limit` is exceeded. |
+
+***
+
+## Pricing Overrides Configuration Fields
+
+Configurable account pricing fields (`api_service_pricing`):
+* `platform_fee`, `platform_fee_value`, `platform_fee_mode`
+* `card_creation_fee`, `card_funding_fee_percent`, `card_funding_fee_cap`, `card_termination_fee_percent`, `card_termination_fee_cap`
+* `monthly_fee_per_card_after_limit`, `monthly_fee_free_limit`
+* `chargeback_fee`, `decline_fee`, `free_limit`, `overage_fee`, `cap`
+
+***
+
+## Status & Retry Lookup Endpoints
+
+Rather than blindly retrying a failed transfer or card request, use the matching status/retry endpoint:
+
+| Action | Status Lookup Endpoint |
+| --- | --- |
+| **Send Money Status** | `POST {{base_url}}/business/sendmoney-status.php` |
+| **Payment Status** | `POST {{base_url}}/checktrans-status` |
+| **Physical Card Request Status** | `POST {{base_url}}/business/cardrequest-status` |
+| **Virtual Card Request Status** | `POST {{base_url}}/business/vcard-request-status` |
 
 ***
 
 ## Webhook Event Specifications
 
-Boldd sends real-time HTTP `POST` callbacks to your application backend whenever status updates occur (such as a successful card charge, virtual account deposit, or card refund).
+Boldd sends real-time HTTP `POST` callbacks to your registered URL when status updates occur.
 
-### Top-Level Event Types (`event_type`)
+### Event Types (`event_type`)
 
 | Event Type | Description |
 | --- | --- |
-| `TRANSACTIONS` | A payment was received via dedicated virtual account (NUBAN), payment link, or API checkout. |
-| `REFUND` | A refund or reversal was processed for a payment or card transaction. |
+| `TRANSACTIONS` | Payment received via virtual account, payment link, or checkout. |
+| `REFUND` | Refund or reversal processed for a payment or card transaction. |
 
 ### Channel Discriminators (`paid_through`)
 
-Inspect the **`paid_through`** field in the `data` object to determine the transaction source:
-
-| `paid_through` Value | Payment Channel Source |
+| `paid_through` Value | Channel Source |
 | --- | --- |
 | `dedicatedAccount` | Inbound bank transfer to a Virtual Account / Dedicated NUBAN. |
-| `paylink` | Online checkout payment via `BolddCheckout()` modal or payment link. |
-| `virtualcard` | Virtual card transaction or lifecycle operation. |
+| `paylink` | Online payment via checkout payment link or modal. |
+| `virtualcard` | Virtual card transaction or issuance event. |
 
 ### Card Event Types (`type` / `normalized_type`)
 
-For card transactions, inspect the `type` or `normalized_type` field in the webhook payload:
+* `virtualcard_authorization` (Approved card spend)
+* `virtualcard_declined` (Declined card spend attempt)
+* `virtualcard_refund` (Card refund / reversal)
+* `virtualcard_topup` (Card funding load)
+* `virtualcard_withdrawal` (Card funds withdrawal to wallet)
+* `virtualcard_termination` (Card termination)
 
-| Event Type | Description |
-| --- | --- |
-| `virtualcard_authorization` | Approved card purchase / POS spend. |
-| `virtualcard_declined` | Declined card transaction attempt (e.g. insufficient card funds). |
-| `virtualcard_refund` | Reversal or merchant refund back to card balance. |
-| `virtualcard_topup` | Card funding load from operational wallet. |
-| `virtualcard_withdrawal` | Card funds withdrawal back to operational wallet. |
-| `virtualcard_termination` | Card termination and balance liquidation. |
-
-### Sample Webhook Payload Format
-
+### Sample Webhook Payload
 ```json
 {
   "event_type": "transactions",
@@ -83,10 +130,9 @@ For card transactions, inspect the `type` or `normalized_type` field in the webh
     "transmode": "live",
     "feeby": "split",
     "reference": "1B6579758742351347",
-    "paid_through": "dedicatedAccount",
+    "paid_through": "paylink",
     "TransDetails": {
       "transref": "1B6579758742351347",
-      "clientref": "",
       "amountpaid": "10000.00",
       "amount_settled": "9950.00",
       "fee": "50.00",
@@ -104,39 +150,8 @@ For card transactions, inspect the `type` or `normalized_type` field in the webh
 }
 ```
 
-### Webhook Delivery & Retry Schedule
-Your listener must respond with an HTTP `200 OK` within 5 seconds. If your server is unreachable or returns a non-200 status code:
-* **Retry Schedule:** Retries automatically every **30 minutes for 48 hours**.
-* **Notification History Log:** Outbound webhooks are logged in `transhook` and retrievable via `GET {{base_url}}/webhookevents.php` (or `POST {{base_url}}/webhookevents`).
-* **Manual Repush:** Use `/business/repushnotification` to manually trigger a re-send.
-
-***
-
-## System Rate Limits & Quotas
-
-To protect infrastructure stability, rate limits apply per merchant account:
-
-| Rate Limit Level | Requests Per Second (RPS) | Burst Allowance |
-| --- | --- | --- |
-| **Sandbox / Staging** | 10 RPS | 20 Requests |
-| **Production (Standard)** | 50 RPS | 100 Requests |
-| **Production (Enterprise)** | Custom (up to 500 RPS) | Custom |
-
-When limits are exceeded, the API responds with HTTP `429 Too Many Requests` containing the header `Retry-After: <seconds>`.
-
-***
-
-## Test Environment Mocking Data
-
-When testing in the Sandbox environment using `sec_test_` keys:
-
-* **Test BVN:** `22222222222` (Simulates valid Tier 1 KYC verification)
-* **Test NIN:** `11111111111` (Simulates valid identity check)
-* **Test Card Numbers:**
-  * `4111 1111 1111 1111` (Visa - Always Succeeds)
-  * `5100 0000 0000 0000` (Mastercard - Always Succeeds)
-  * `5061 0000 0000 0000` (Verve - Always Succeeds)
-  * `4000 0000 0000 0002` (Simulates Declined Transaction)
-* **Test CVV:** Any 3 digits (`123`)
-* **Test Expiry:** Any future date (`12/30`)
-* **Test Virtual Account Inbound Credit:** Use the Sandbox test credit utility endpoint to simulate inbound bank transfers.
+### Delivery & Retry Policy
+* Endpoint must acknowledge with an HTTP `200 OK` within 5 seconds.
+* If delivery fails, Boldd retries for **48 hours at 30-minute intervals**.
+* Outbound webhooks are logged in `transhook` and retrievable via `GET {{base_url}}/webhookevents.php` (or `POST {{base_url}}/webhookevents`).
+* Manual repush can be triggered via `POST {{base_url}}/business/repushnotification`.

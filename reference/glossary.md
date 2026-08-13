@@ -125,18 +125,6 @@ Utility bill payment endpoint for purchasing prepaid electricity tokens or payin
 </details>
 
 <details>
-<summary><strong>HMAC SHA-256 Signature</strong></summary>
-
-A cryptographic hash function used to generate a secure signature header (`X-Boldd-Signature`) to verify webhook authenticity.
-</details>
-
-<details>
-<summary><strong>Idempotency (`X-Idempotency-Key`)</strong></summary>
-
-A feature that guarantees that sending the same API request multiple times produces the exact same outcome without duplicate charges or duplicate card creation.
-</details>
-
-<details>
 <summary><strong>Inline / Popup Checkout (`BolddCheckout()`)</strong></summary>
 
 A lightweight client-side JavaScript payment widget allowing merchants to collect card and bank transfer payments inside a modal popup.
