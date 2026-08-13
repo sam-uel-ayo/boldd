@@ -38,82 +38,77 @@ Authorization: Bearer sec_live_9a8b7c6d5e4f3a2b1c0d9e8f
 
 ***
 
-## Webhook Architecture & Signature Verification
+## Webhook Event Specifications
 
-Boldd sends real-time HTTP `POST` notifications for transaction updates, card events, and account credits.
+Boldd sends real-time HTTP `POST` callbacks to your application backend whenever status updates occur (such as a successful card charge, virtual account deposit, or card refund).
 
-### Webhook Event Envelope Payload
+### Top-Level Event Types (`event_type`)
+
+| Event Type | Description |
+| --- | --- |
+| `TRANSACTIONS` | A payment was received via dedicated virtual account (NUBAN), payment link, or API checkout. |
+| `REFUND` | A refund or reversal was processed for a payment or card transaction. |
+
+### Channel Discriminators (`paid_through`)
+
+Inspect the **`paid_through`** field in the `data` object to determine the transaction source:
+
+| `paid_through` Value | Payment Channel Source |
+| --- | --- |
+| `dedicatedAccount` | Inbound bank transfer to a Virtual Account / Dedicated NUBAN. |
+| `paylink` | Online checkout payment via `BolddCheckout()` modal or payment link. |
+| `virtualcard` | Virtual card transaction or lifecycle operation. |
+
+### Card Event Types (`type` / `normalized_type`)
+
+For card transactions, inspect the `type` or `normalized_type` field in the webhook payload:
+
+| Event Type | Description |
+| --- | --- |
+| `virtualcard_authorization` | Approved card purchase / POS spend. |
+| `virtualcard_declined` | Declined card transaction attempt (e.g. insufficient card funds). |
+| `virtualcard_refund` | Reversal or merchant refund back to card balance. |
+| `virtualcard_topup` | Card funding load from operational wallet. |
+| `virtualcard_withdrawal` | Card funds withdrawal back to operational wallet. |
+| `virtualcard_termination` | Card termination and balance liquidation. |
+
+### Sample Webhook Payload Format
+
 ```json
 {
-  "event": "vaccount.credited",
-  "event_id": "evt_9876543210",
-  "created_at": "2026-08-13T16:50:00Z",
+  "event_type": "transactions",
   "data": {
-    "account_number": "9912345678",
-    "bank_name": "Wema Bank",
-    "amount": "25000.00",
-    "currency": "NGN",
-    "session_id": "000013240813165000001",
-    "payer_name": "CHIDI OKONKWO",
-    "payer_account": "0123456789",
-    "reference": "REF_TRANSFER_9912"
+    "trans_status": "06",
+    "message": "Successful",
+    "transmode": "live",
+    "feeby": "split",
+    "reference": "1B6579758742351347",
+    "paid_through": "dedicatedAccount",
+    "TransDetails": {
+      "transref": "1B6579758742351347",
+      "clientref": "",
+      "amountpaid": "10000.00",
+      "amount_settled": "9950.00",
+      "fee": "50.00",
+      "currency": "NGN",
+      "previous_bal": "100000.00",
+      "new_bal": "19950.00",
+      "payment_time": "Sat, 16 Jul 2026"
+    },
+    "CustomerDetails": {
+      "customer_name": "John Doe",
+      "customer_email": "johndoe@example.com",
+      "customer_phone": "0701234567"
+    }
   }
 }
 ```
 
-### Supported Webhook Events
-
-| Event Name | Trigger Condition |
-| --- | --- |
-| `payment.successful` | Inline or popup checkout payment completed and verified. |
-| `payment.failed` | Payment attempt failed or declined by issuing bank. |
-| `vaccount.credited` | Inbound bank transfer credited to a dedicated NUBAN virtual account. |
-| `card.issued` | Virtual or physical card order successfully issued. |
-| `card.debited` | Debit transaction executed on a card. |
-| `card.credited` | Refund or funding transaction applied to a card. |
-| `card.frozen` | Card status toggled to frozen. |
-| `dispute.created` | Customer dispute or chargeback logged against a transaction. |
-| `kyc.verified` | Customer Liveness Check or Full KYC verification completed. |
-
-### HMAC SHA-256 Signature Verification
-To verify that webhooks originate from Boldd and have not been tampered with, calculate the HMAC SHA-256 signature using your Webhook Secret Key and compare it with the `X-Boldd-Signature` header.
-
-#### Node.js Verification Example
-```javascript
-const crypto = require('crypto');
-
-function verifyWebhookSignature(rawBody, signatureHeader, secretKey) {
-  const hash = crypto
-    .createHmac('sha256', secretKey)
-    .update(rawBody)
-    .digest('hex');
-  return hash === signatureHeader;
-}
-```
-
-#### Python Verification Example
-```python
-import hmac
-import hashlib
-
-def verify_webhook_signature(raw_body_bytes, signature_header, secret_key):
-    expected_hash = hmac.new(
-        secret_key.encode('utf-8'),
-        raw_body_bytes,
-        hashlib.sha256
-    ).hexdigest()
-    return hmac.compare_digest(expected_hash, signature_header)
-```
-
-### Webhook Retry & Delivery Policy
-If your endpoint fails to return an HTTP `200 OK` status (e.g. timeout, 5xx server error), Boldd retries delivery according to the following schedule:
-* **Retry 1:** 5 minutes after initial attempt
-* **Retry 2:** 15 minutes after initial attempt
-* **Retry 3:** 1 hour after initial attempt
-* **Retry 4:** 6 hours after initial attempt
-* **Retry 5:** 24 hours after initial attempt
-
-Manual webhook retries can be requested at any time using the [Repush Notification](../getting-started/webhooks-and-notifications/repush-notification.md) endpoint (`/business/repushnotification`).
+### Webhook Delivery & Retry Schedule
+Your listener must respond with an HTTP `200 OK` within 5 seconds. If your server is unreachable or returns a non-200 status code:
+* **Retry Schedule:** Retries automatically every **30 minutes for 48 hours**.
+* **Notification History Log:** Outbound webhooks are logged in `transhook` and retrievable via `GET {{base_url}}/webhookevents.php` (or `POST {{base_url}}/webhookevents`).
+* **Manual Repush:** Use `/business/repushnotification` to manually trigger a re-send.
 
 ***
 
