@@ -8,38 +8,11 @@ Technical reference and core specifications for the **Boldd API Platform**.
 
 ***
 
-## Platform Navigation
+### Platform Navigation
 
-<table data-card-size="large" data-view="cards">
-<thead>
-<tr>
-<th></th>
-<th>Section</th>
-<th>Description</th>
-<th data-hidden data-card-target data-type="content-ref">Link</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td><h4>:sliders:</h4></td>
-<td><strong>Configuration</strong></td>
-<td>Base URL, authentication headers, service grants, quotas, pricing fields, and webhook specs.</td>
-<td><a href="configuration.md">Configuration</a></td>
-</tr>
-<tr>
-<td><h4>:bookmark:</h4></td>
-<td><strong>Glossary</strong></td>
-<td>Definitions of terms, KYC tiers, response codes, and endpoints used across the docs.</td>
-<td><a href="glossary.md">Glossary</a></td>
-</tr>
-<tr>
-<td><h4>:graduation-cap:</h4></td>
-<td><strong>Integration Guides</strong></td>
-<td>Walkthroughs for payments, virtual accounts, cards, identity verification, and webhooks.</td>
-<td><a href="guides.md">Guides</a></td>
-</tr>
-</tbody>
-</table>
+* **[Configuration](configuration.md):** Base URL, authentication headers, service grants, quotas, pricing fields, and webhook specifications.
+* **[Glossary](glossary.md):** Definitions of terms, KYC tiers, response codes, and endpoints used across the documentation.
+* **[Integration Guides](guides.md):** Step-by-step walkthroughs for payments, virtual accounts, debit cards, identity verification, and webhooks.
 
 ***
 
@@ -63,7 +36,7 @@ All API requests must use the base URL:
 
 ## Response Envelope & Validation Handling
 
-Every Boldd API response returns a consistent JSON envelope:
+Every API response returns a consistent JSON envelope:
 
 ```json
 {
@@ -105,7 +78,7 @@ Every Boldd API response returns a consistent JSON envelope:
 
 | Status Code | Description |
 | --- | --- |
-| `200 OK` | Request processed. Note: Most Boldd API responses (even application errors) return `200 OK` with a `"status": false` payload. |
+| `200 OK` | Request processed. Note: Most API responses (even application errors) return `200 OK` with a `"status": false` payload. |
 | `400 Bad Request` | Request unacceptable due to missing parameters or invalid formatting. |
 | `401 Unauthorized` | Missing or invalid API key, or using a Test Key on a Live-only endpoint. |
 | `403 Forbidden` | API key lacks permission or missing required Service Grant. |
