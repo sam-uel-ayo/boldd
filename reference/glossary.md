@@ -1,146 +1,225 @@
 ---
-description: Definitions of terms you'll encounter in the docs and dashboard.
+description: Comprehensive A-Z financial, compliance, card, and payment API term definitions.
 icon: bookmark
 ---
 
 # Glossary
 
-Plain-language definitions of terms used across the platform. Click any entry to expand it.
+Exhaustive, plain-language definitions of terms, parameters, status codes, and financial concepts used across the **Boldd API Platform** and Merchant Dashboard.
 
 ***
 
-## A — F
+## A — C
 
 <details>
+<summary><strong>Account Number / Dedicated NUBAN</strong></summary>
 
-<summary><strong>API key</strong></summary>
-
-A secret token that authenticates requests to the platform's API. Keys are scoped to a workspace and inherit the permissions of whoever created them. See [Broken link](/broken/pages/fb922e107b31a3e9e9fcf81410029e993b0a9afc "mention").
-
+A unique 10-digit bank account number generated dynamically or statically for a customer, sub-account, or wallet. Inbound transfers sent to a NUBAN are automatically credited to the merchant's ledger.
 </details>
 
 <details>
+<summary><strong>Airtime Topup</strong></summary>
 
-<summary><strong>Automation</strong></summary>
-
-A piece of code that runs in response to a trigger — for example, a deploy completing or a comment being posted. See [Broken link](/broken/pages/d9d593aeabc52a165190bf8c93720491a4eb9682 "mention").
-
+Mobile credit purchase for prepaid cellular networks (e.g. MTN, Airtel, Glo, 9mobile) executed via the Value-Added Services (VAS) endpoints.
 </details>
 
 <details>
+<summary><strong>API Key / Secret Key</strong></summary>
 
-<summary><strong>Build</strong></summary>
-
-The process of turning your source code into deployable output. Each build produces an artefact, which is then promoted to a deploy.
-
+A sensitive cryptographic token used to authenticate API requests. Passed in headers as `Authorization: Bearer sec_live_...` or `Authorization: Bearer sec_test_...`.
 </details>
 
 <details>
+<summary><strong>Authorization Header</strong></summary>
 
-<summary><strong>Custom domain</strong></summary>
-
-Your own domain (like `docs.yourcompany.com`) attached to a project, in place of the auto-generated subdomain. See [Broken link](/broken/pages/56a52747d54863f8df67ff3ce908938888c69b66 "mention").
-
+The standard HTTP request header containing Bearer secret key credentials to authenticate API calls.
 </details>
 
 <details>
+<summary><strong>Base URL</strong></summary>
 
-<summary><strong>Deploy</strong></summary>
-
-A live version of your project, served from a URL. Each successful build can be promoted to a deploy. The current production deploy is the one served at your primary URL.
-
+The root path for all HTTP API requests. Standardized as `https://api.oneappgo.com/v1`.
 </details>
 
 <details>
+<summary><strong>Bearer Token</strong></summary>
 
-<summary><strong>Environment</strong></summary>
-
-The set of variables, secrets, and configuration that applies when your project runs. Most projects have at least two environments: production and preview.
-
-</details>
-
-***
-
-## G — P
-
-<details>
-
-<summary><strong>Guest</strong></summary>
-
-A workspace role that can view published deploys but nothing else. Guests don't count towards your member limit. See [Broken link](/broken/pages/fb922e107b31a3e9e9fcf81410029e993b0a9afc "mention").
-
+An HTTP authentication scheme where access is granted to whoever holds the token string in the header.
 </details>
 
 <details>
+<summary><strong>Biometric Liveness Check</strong></summary>
 
-<summary><strong>Member</strong></summary>
-
-Anyone with access to a workspace. Each member has a role that determines what they can do. Different from a guest, which is a special role that doesn't count towards your member limit.
-
+A facial verification process that captures a short video or 3D facial scan to confirm that a live human is completing identity onboarding.
 </details>
 
 <details>
+<summary><strong>BVN (Bank Verification Number)</strong></summary>
 
-<summary><strong>Preview deploy</strong></summary>
-
-A deploy created automatically for a branch or pull request, served at a unique URL. Used to test changes before they reach production.
-
+An 11-digit biometric identity number issued by the Central Bank of Nigeria used to verify customer identities during Tier 1 KYC checks.
 </details>
 
 <details>
+<summary><strong>Cable TV Purchase (IUC / Smartcard)</strong></summary>
 
-<summary><strong>Project</strong></summary>
-
-A deployable unit. Each project has its own source, builds, deploys, environment, and domains. Projects are isolated from each other within a workspace. See [Broken link](/broken/pages/8d7897a648fcd91cdfe61c6055c3fc9a2774e089 "mention").
-
-</details>
-
-***
-
-## R — Z
-
-<details>
-
-<summary><strong>Role</strong></summary>
-
-A workspace-level designation that determines what a member can do. Roles are: Guest, Viewer, Reviewer, Editor, and Admin. See [Broken link](/broken/pages/fb922e107b31a3e9e9fcf81410029e993b0a9afc "mention").
-
+Subscription renewal for digital television providers (DSTV, GOTV, Startimes) using verified IUC or Smartcard numbers.
 </details>
 
 <details>
+<summary><strong>Card Activation</strong></summary>
 
-<summary><strong>Source</strong></summary>
-
-The repository or upload that produces your project's builds. A project has exactly one source.
-
+The API process (`card-activation`) that transforms a delivered physical debit card from an unactivated fulfillment state into an active, spendable card with an ATM PIN.
 </details>
 
 <details>
+<summary><strong>Card Funding</strong></summary>
 
-<summary><strong>SSO</strong></summary>
-
-Single sign-on. Lets your team authenticate with your identity provider (Okta, Azure AD, etc.) instead of platform-specific credentials. Available on Business and Enterprise plans.
-
+Transferring funds from a merchant operational balance directly into a specific virtual or physical card balance.
 </details>
 
 <details>
+<summary><strong>Card Request Status</strong></summary>
 
-<summary><strong>Trigger</strong></summary>
-
-The event that starts an automation — for example, `deploy.succeeded` or `webhook.received`. See [Broken link](/broken/pages/d9d593aeabc52a165190bf8c93720491a4eb9682 "mention").
-
+The tracking state (`vcard-request-status`) of a physical card order during printing, batching, shipping, and courier delivery.
 </details>
 
 <details>
+<summary><strong>Card Statement</strong></summary>
 
-<summary><strong>Workspace</strong></summary>
+An itemized transaction ledger endpoint (`card-statement` / `card-statement.php`) returning card activity logs for virtual and physical cards, supporting date filtering up to 3 months (`from_date`, `to_date`, `months`, `duration_months`).
+</details>
 
-The top-level container for a team's work. Owns billing, members, and projects. See [Broken link](/broken/pages/8d7897a648fcd91cdfe61c6055c3fc9a2774e089 "mention").
+<details>
+<summary><strong>Card Withdrawal</strong></summary>
 
+Moving available funds out of a virtual or physical card back into the main merchant wallet (`vcard-withdraw`).
+</details>
+
+<details>
+<summary><strong>Chargeback & Dispute</strong></summary>
+
+A claim filed by a cardholder contesting a transaction. Managed via the Dispute Management endpoints (`fetch-disputes`, `accept-a-dispute`, `decline-a-dispute`).
+</details>
+
+<details>
+<summary><strong>Customer Tier 1 vs Full KYC</strong></summary>
+
+* **Tier 1:** Basic onboarding requiring valid name, phone number, and verified BVN or NIN.
+* **Full KYC:** Advanced onboarding requiring proof of address, verified identity documents, and completed Liveness Check. Mandatory for Physical Card issuance.
 </details>
 
 ***
 
-{% hint style="info" %}
-A term missing? [Suggest it in the community](https://community.example.com/) — we update this glossary regularly.
-{% endhint %}
+## D — M
+
+<details>
+<summary><strong>Detach Account</strong></summary>
+
+Deactivating or removing a virtual account number (`detach-virtualaccount` / `disable-accountno`) from an active customer profile.
+</details>
+
+<details>
+<summary><strong>Electricity Biller (Meter Number Verification)</strong></summary>
+
+Utility bill payment endpoint for purchasing prepaid electricity tokens or paying postpaid utility bills across discos.
+</details>
+
+<details>
+<summary><strong>HMAC SHA-256 Signature</strong></summary>
+
+A cryptographic hash function used to generate a secure signature header (`X-Boldd-Signature`) to verify webhook authenticity.
+</details>
+
+<details>
+<summary><strong>Idempotency (`X-Idempotency-Key`)</strong></summary>
+
+A feature that guarantees that sending the same API request multiple times produces the exact same outcome without duplicate charges or duplicate card creation.
+</details>
+
+<details>
+<summary><strong>Inline / Popup Checkout (`BolddCheckout()`)</strong></summary>
+
+A lightweight client-side JavaScript payment widget allowing merchants to collect card and bank transfer payments inside a modal popup.
+</details>
+
+<details>
+<summary><strong>ISO 4217 Currency Codes</strong></summary>
+
+Standardized 3-letter currency identifiers supported across balances and global accounts (e.g. `NGN`, `USD`, `EUR`, `MXN`).
+</details>
+
+<details>
+<summary><strong>KYC (Know Your Customer)</strong></summary>
+
+Mandatory regulatory identity verification procedures performed prior to enabling banking services or card issuance.
+</details>
+
+<details>
+<summary><strong>Multi-Tenancy & Sub-Accounts</strong></summary>
+
+An architectural framework allowing platform merchants to create sub-accounts, attach custom payout accounts, and manage split settlements.
+</details>
+
+***
+
+## N — Z
+
+<details>
+<summary><strong>NIN (National Identification Number)</strong></summary>
+
+An 11-digit national identity number issued by NIMC used for identity verification checks in Nigeria.
+</details>
+
+<details>
+<summary><strong>Operational Wallet / Balance</strong></summary>
+
+The central pool of funds held in a merchant's account used to issue cards, fund accounts, execute payouts, and settle transactions.
+</details>
+
+<details>
+<summary><strong>Physical Card</strong></summary>
+
+A plastic or metal debit card linked to a customer ledger, enabled for physical Point-Of-Sale (POS) purchases and ATM cash withdrawals.
+</details>
+
+<details>
+<summary><strong>PIN (Personal Identification Number)</strong></summary>
+
+A 4-digit secret passcode used by cardholders to authorize physical card POS/ATM transactions or virtual card security operations (`update-card-pin`).
+</details>
+
+<details>
+<summary><strong>Repush Notification</strong></summary>
+
+An API operation (`/business/repushnotification`) that manually triggers a re-send of a missing or failed webhook event notification.
+</details>
+
+<details>
+<summary><strong>Sandbox Environment</strong></summary>
+
+A isolated test environment using `sec_test_` keys, test bank accounts, and mock card numbers to safely test API integrations.
+</details>
+
+<details>
+<summary><strong>Settlement & Payout</strong></summary>
+
+The transfer of collected payment funds from Boldd merchant ledgers to a registered commercial bank account.
+</details>
+
+<details>
+<summary><strong>Universal Blacklist</strong></summary>
+
+A centralized security registry used to flag and block fraudulent BVNs, accounts, cards, or IP addresses from interacting with the platform.
+</details>
+
+<details>
+<summary><strong>Virtual Card</strong></summary>
+
+A digital payment card (Visa/Mastercard/Verve) generated instantly via API for online shopping, cloud subscriptions, and global digital payments.
+</details>
+
+<details>
+<summary><strong>Webhook</strong></summary>
+
+An automated HTTP `POST` notification sent by Boldd servers to a merchant's backend server whenever a transaction, deposit, or card event occurs.
+</details>
