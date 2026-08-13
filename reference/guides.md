@@ -8,7 +8,7 @@ Comprehensive, self-contained integration guides for building production financi
 
 ***
 
-## 💳 1. Card Operations & Issuance Lifecycle
+## 1. Card Operations & Issuance Lifecycle
 
 Implement end-to-end virtual and physical debit card issuance, funding, transactions, and statements.
 
@@ -21,7 +21,7 @@ Implement end-to-end virtual and physical debit card issuance, funding, transact
 
 ***
 
-## 🏦 2. Virtual Accounts & Inbound Bank Collections
+## 2. Virtual Accounts & Inbound Bank Collections
 
 Generate dedicated virtual bank account numbers (NUBANs) for automated bank transfer collections.
 
@@ -32,7 +32,7 @@ Generate dedicated virtual bank account numbers (NUBANs) for automated bank tran
 
 ***
 
-## 🛒 3. Payments & Inline Checkout
+## 3. Payments & Inline Checkout
 
 Integrate web payment checkout flows for credit/debit cards, bank transfers, and wallets.
 
@@ -42,7 +42,7 @@ Integrate web payment checkout flows for credit/debit cards, bank transfers, and
 
 ***
 
-## 👤 4. Customer Onboarding & KYC Compliance
+## 4. Customer Onboarding & KYC Compliance
 
 Verify identity and maintain regulatory compliance across onboarding tiers.
 
@@ -52,7 +52,7 @@ Verify identity and maintain regulatory compliance across onboarding tiers.
 
 ***
 
-## 💸 5. Transfers, Payouts & Settlements
+## 5. Transfers, Payouts & Settlements
 
 Execute outbound transfers and manage merchant payouts.
 
@@ -63,7 +63,7 @@ Execute outbound transfers and manage merchant payouts.
 
 ***
 
-## ⚡ 6. Value-Added Services (VAS) & Utilities
+## 6. Value-Added Services (VAS) & Utilities
 
 Sell airtime, data bundles, and utility bill payments.
 
@@ -73,7 +73,7 @@ Sell airtime, data bundles, and utility bill payments.
 
 ***
 
-## 🏢 7. Sub-Accounts & Multi-Tenant Platform Settlement
+## 7. Sub-Accounts & Multi-Tenant Platform Settlement
 
 Manage multi-tenant platforms, sub-merchants, and fee splitting.
 
@@ -83,7 +83,7 @@ Manage multi-tenant platforms, sub-merchants, and fee splitting.
 
 ***
 
-## 🔔 8. Webhooks & Event-Driven Architecture
+## 8. Webhooks & Event-Driven Architecture
 
 * **[Webhook Notifications](../getting-started/webhooks-and-notifications/webhook-notifications.md):** Configure secure webhook endpoints and process automated payload notifications.
 * **[Repush Notification](../getting-started/webhooks-and-notifications/repush-notification.md):** Request manual webhook re-delivery for missing notifications (`/business/repushnotification`).
